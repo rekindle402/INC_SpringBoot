@@ -1,6 +1,8 @@
 package com.sinse.restapp;
 
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController()
+@Slf4j
+@RestController
 public class BoardController {
 
     @GetMapping("/test")
@@ -19,6 +22,7 @@ public class BoardController {
 
     @GetMapping("/boards")
     public List selectAll(){
+        log.debug("목록요청받음");
         List list = new ArrayList();
         list.add("apple");
         list.add("orange");
