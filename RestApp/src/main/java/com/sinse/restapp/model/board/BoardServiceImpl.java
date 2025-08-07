@@ -1,4 +1,4 @@
-package com.sinse.restapp.model;
+package com.sinse.restapp.model.board;
 
 import com.sinse.restapp.domain.Board;
 import com.sinse.restapp.exception.BoardException;
@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void insert(Board board)throws BoardException {
+    public void insert(Board board)throws DataAccessException {
         try{
             boardDAO.insert(board);
             // 이 서비스 객체가 특정 DB 연동 기술에 국한된 것이 아니라,
@@ -44,7 +44,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board update(Board board)throws BoardException {
+    public Board update(Board board)throws DataAccessException {
         try {
             return boardDAO.update(board);
         } catch (DataAccessException e) {
@@ -53,7 +53,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void delete(Board board_id) throws BoardException {
+    public void delete(int board_id) throws DataAccessException {
         try{
             boardDAO.delete(board_id);
         } catch (DataAccessException e) {

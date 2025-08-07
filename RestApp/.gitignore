@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### DB경로
-RestApp/src/main/resources/application.properties
+**/src/main/resources/application.properties

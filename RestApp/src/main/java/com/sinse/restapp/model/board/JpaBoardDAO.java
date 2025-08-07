@@ -1,7 +1,6 @@
-package com.sinse.restapp.model;
+package com.sinse.restapp.model.board;
 
 import com.sinse.restapp.domain.Board;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
