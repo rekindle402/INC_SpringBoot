@@ -1,4 +1,13 @@
-package com.sinse.restapp;
+package com.sinse.restapp.model;
+
+import com.sinse.restapp.domain.Board;
+
+import java.util.List;
 
 public interface BoardService {
+    public List selectAll();
+    public Board select(int board_id);
+    public void insert(Board board);
+    public Board update(Board board);
+    public void delete(Board board_id);
 }
