@@ -2,6 +2,7 @@ package com.sinse.restapp.controller;
 
 
 import com.sinse.restapp.domain.Board;
+import com.sinse.restapp.model.board.BoardMapper;
 import com.sinse.restapp.model.board.BoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

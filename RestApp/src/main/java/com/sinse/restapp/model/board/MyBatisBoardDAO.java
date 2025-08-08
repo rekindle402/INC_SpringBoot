@@ -26,12 +26,12 @@ public class MyBatisBoardDAO implements BoardDAO {
     }
 
     @Override
-    public void insert(Board board) {
+    public void insert(Board board) throws DataAccessException{
         boardMapper.insert(board);
     }
 
     @Override
-    public Board update(Board board) {
+    public Board update(Board board) throws DataAccessException{
         boardMapper.update(board);
         return board;
     }

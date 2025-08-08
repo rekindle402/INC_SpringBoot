@@ -7,10 +7,10 @@ import java.util.List;
 
 @Mapper
 public interface BoardMapper {
-    List selectAll();
-    Board select(int board_id);
-    Board insert(Board board);
-    void update(Board board);
-    void delete(int board_id);
+    public List selectAll();
+    public Board select(int board_id);
+    public Board insert(Board board);
+    public void update(Board board);
+    public void delete(int board_id);
 
 }

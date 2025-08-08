@@ -38,11 +38,7 @@ public class JpaBoardDAO implements BoardDAO {
     }
 
     @Override
-    public void delete(Board board_id) {
-        //삭제 시 무조건 일치하는 pk를 지우지 말고, 실제적으로 존재하는 데이터인지 먼저 체크한 후 삭제하는게 안전
-       Board board = em.find(Board.class, board_id);
-       if(board != null) {
-           em.remove(board);
-       }
+    public void delete(int board_id) {
+        em.remove(em.find(Board.class, board_id));
     }
 }
