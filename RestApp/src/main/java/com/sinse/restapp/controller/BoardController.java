@@ -52,6 +52,7 @@ public class BoardController {
     // 삭제 요청 처리
     @DeleteMapping("/boards/{board_id}")
     public ResponseEntity<String> delete(@PathVariable("board_id") int board_id) {
+        log.warn("삭제 요청 받음 ");
         boardService.delete(board_id);
         return ResponseEntity.ok("success");
     }
