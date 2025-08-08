@@ -23,12 +23,8 @@ public class BoardController {
 
     @GetMapping("/boards")
     public List selectAll() {
-        log.debug("목록요청받음");
-        List list = new ArrayList();
-        list.add("apple");
-        list.add("orange");
-        list.add("banana");
-
+        log.debug("목록 요청 받음");
+        List list = boardService.selectAll();
         return list;
     }
 
@@ -44,6 +40,7 @@ public class BoardController {
         boardService.insert(board);
         return ResponseEntity.ok("success");
     }
+
     // 수정 요청 처리
     @PutMapping("/boards/{board_id}")
     public ResponseEntity<String> update(@PathVariable("board_id") int board_id, @RequestBody Board board) {
