@@ -1,4 +1,4 @@
-package com.sinse.foodapp.config;
+package com.sinse.highwayapp.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
