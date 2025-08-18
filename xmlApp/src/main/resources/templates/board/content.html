@@ -36,20 +36,17 @@
             padding: 20px;
         }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
-<h3>글 작성</h3>
+<h3>디테일</h3>
 
 <div class="container">
-    <form action="/action_page.php">
-        <input type="text" id="fname" name="title" placeholder="Your name..">
-
-        <input type="text" id="lname" name="writer" placeholder="Your last name..">
-
-        <textarea id="subject" name="content" placeholder="Write something.." style="height:200px"></textarea>
-
+    <form action="">
+        <input type="text" id="fname" name="title" th:field="${board.title}">
+        <input type="text" id="lname" name="writer" th:field="${board.writer}">
+        <textarea id="subject" name="content" th:field="${board.content}" style="height:200px"></textarea>
         <input type="button" value="Submit">
     </form>
 </div>
