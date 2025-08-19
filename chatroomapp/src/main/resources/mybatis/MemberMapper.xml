@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sinse.chatroomapp.repository.MemberMapper">
+
+    <select id="selectAll" resultType="Member">
+        SELECT * FROM member
+    </select>
+
+    <select id="select" parameterType="int" resultType="Member">
+        SELECT * FROM member WHERE id=#{member_id}
+    </select>
+
+
+
+    <insert id="insert" parameterType="Member">
+        INSERT INTO member(id, password, name, email ) VALUES(#{id}, #{password}, #{name}, #{email})
+    </insert>
+
+    <select id="selectByIdAndPass" parameterType="Member" resultType="Member">
+        SELECT * FROM member WHERE id = #{id} AND password = #{password}
+    </select>
+
+</mapper>

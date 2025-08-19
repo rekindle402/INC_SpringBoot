@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방</title>
+
+    <style>
+        body {
+            background-color: #f0f2f5;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-wrapper {
+            width: 1200px;
+            height: 800px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            overflow: hidden; /* 자식 요소가 부모를 벗어나지 않도록 */
+        }
+        /* 사이드바 스타일 */
+        #chat-aside {
+            width: 250px;
+            height: 100%;
+            background: #f7f7f7;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #room-info h3 {
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+        #participant-list h4 {
+            margin: 0 0 10px 0;
+            color: #555;
+        }
+        #participant-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #participant-list li {
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            color: #444;
+        }
+        #exit-button {
+            margin-top: auto; /* 버튼을 맨 아래로 밀어냄 */
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background-color: #ff6b6b;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        #exit-button:hover {
+            background-color: #ff4757;
+        }
+
+        /* 메인 채팅 콘텐츠 영역 */
+        #chat-content {
+            width: 950px;
+            height: 100%;
+            display: flex;
+            flex-direction: column; /* 자식 요소들을 세로로 정렬 */
+        }
+
+        /* 메시지 표시 영역 */
+        #chat-log {
+            flex-grow: 1; /* 남은 공간을 모두 차지 */
+            padding: 20px;
+            overflow-y: auto; /* 메시지가 많아지면 스크롤 생성 */
+            background-color: #e5ddd5;
+        }
+        .message-bubble {
+            max-width: 60%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            word-wrap: break-word; /* 긴 단어가 있어도 줄바꿈 */
+        }
+        .message-bubble .sender {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .my-message {
+            background-color: #dcf8c6;
+            margin-left: auto; /* 내 메시지를 오른쪽으로 정렬 */
+            border-bottom-right-radius: 3px;
+        }
+        .other-message {
+            background-color: #ffffff;
+            margin-right: auto; /* 다른 사람 메시지를 왼쪽으로 정렬 */
+            border-bottom-left-radius: 3px;
+        }
+
+        /* 메시지 입력 영역 */
+        #chat-input-area {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+        #message-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        #send-button {
+            width: 80px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div id="chat-wrapper">
+    <!-- 왼쪽 사이드바: 방 정보, 참여자 목록 -->
+    <div id="chat-aside">
+        <div id="room-info">
+            <h3>Vue.js 스터디방</h3>
+        </div>
+        <div id="participant-list">
+            <h4>참여자 (3명)</h4>
+            <ul>
+                <li>김철수</li>
+                <li>이영희</li>
+                <li>박민준</li>
+            </ul>
+        </div>
+        <button id="exit-button">나가기</button>
+    </div>
+
+    <!-- 오른쪽 메인 콘텐츠: 채팅 로그, 입력창 -->
+    <div id="chat-content">
+        <!-- 메시지가 표시될 영역 -->
+        <div id="chat-log">
+            <!-- 다른 사람 메시지 예시 -->
+            <div class="message-bubble other-message">
+                <div class="sender">김철수</div>
+                <div class="text">안녕하세요! 다들 오셨네요.</div>
+            </div>
+
+            <!-- 내가 보낸 메시지 예시 -->
+            <div class="message-bubble my-message">
+                <div class="text">네, 안녕하세요! 반갑습니다.</div>
+            </div>
+
+            <!-- 다른 사람 메시지 예시 -->
+            <div class="message-bubble other-message">
+                <div class="sender">이영희</div>
+                <div class="text">오늘 스터디 주제가 뭔가요?</div>
+            </div>
+        </div>
+
+        <!-- 메시지 입력 폼 -->
+        <div id="chat-input-area">
+            <input type="text" id="message-input" placeholder="메시지를 입력하세요...">
+            <button id="send-button">전송</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
