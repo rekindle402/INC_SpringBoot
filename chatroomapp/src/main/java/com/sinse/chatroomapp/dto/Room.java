@@ -10,5 +10,5 @@ public class Room {
     private String UUID; // 방의 고유 식별자
     private String master;
     private String roomName;
-    private Set<Member> users;
+    private Set<Member> userList;
 }

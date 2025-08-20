@@ -6,8 +6,8 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class RoomResponse {
-    private String responseType;
+public class CloseResponse {
+    private  String responseType;
     private Set<Member> memberList;
     private Set<Room> roomList;
 }
