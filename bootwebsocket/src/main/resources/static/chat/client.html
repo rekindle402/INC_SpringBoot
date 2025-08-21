@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+<div id="app">
+    <h3>★ Spring WebSocket 기반 채팅 ★</h3>
+
+    <div v-if="!connected">
+        <input placeholder="채팅 사용자명 입력" type="text" v-model="username">
+        <button @click="connect()" type="button">웹 소켓서버 접속</button>
+    </div>
+    <div v-else>
+        <p><b>{{username}}</b>님 접속중</p>
+        <button @click="disconnect()" type="button">접속종료</button>
+        <br>
+        <div>
+            <input @keyup.enter="sendMsg()" placeholder="메시지를 입력하세요" type="text" v-model="msg">
+            <button @click="sendMsg()" type="button">메시지 전송</button>
+        </div>
+
+        <h3>총 접속자</h3>
+        <ul>
+            <li v-for="user in users">{{user}}</li>
+        </ul>
+
+        <h3> 메시지 로그</h3>
+        <ul>
+            <li v-for="msg in messages">
+                <b style="background-color: lightgoldenrodyellow">{{msg.sender}}</b>
+                <p style="background-color: mistyrose">:{{msg.content}}</p>
+            </li>
+        </ul>
+
+        <div>
+            <input placeholder="방 이름 입력" type="text" v-model="roomName">
+            <button @click="createRoom()" type="button">방만들기</button>
+        </div>
+
+
+        <h3>방 목록</h3>
+        <ul>
+            <li :key="room.roomId" v-for="room in rooms">
+                <b>{{room.roomName}}</b> (참여자 수 : {{room.users.length}})
+                <ul>
+                    <li v-for="user in room.users">{{user}}</li>
+                    <button @click="enterRoom(room.roomId)" type="button">참여하기</button>
+                    <button @click="leaveRoom(room.roomId)" type="button">나가기</button>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    const {createApp, ref} = Vue;
+    createApp({
+        setup() {
+            const username = ref(""); // 사용자명 바인딩 변수
+            const connected = ref(false); // 접속 여부 판단 변수
+            const msg = ref(""); //입력중인 채팅 메시지
+            const users = ref([]); // 전체 접속자 목록
+            const messages = ref([]); // 채팅 메시지 목록
+            const roomName = ref("");
+            const rooms = ref([]);
+
+            let socket = null;
+
+
+            /*-----------
+             * 메세지 전송
+            -----------*/
+            const send = (payload) => {
+                socket.send(JSON.stringify(payload))
+            }
+
+            /*-----------
+             * 서버와 연결
+             -----------*/
+            const connect = () => {
+                if (!username.value.trim()) {
+                    alert("이름을 입력해주세요");
+                    return;
+                }
+
+                // 서버 접속시도. onopen 호출되면 성공된것임.
+                socket = new WebSocket("ws://localhost:9999/ws");
+
+                socket.onopen = () => {
+                    connected.value = true;
+
+                    const payload = {
+                        type: "CONNECT",
+                        sender: username.value
+                    }
+
+                    send(payload);
+                }
+
+                // 서버로부터 메시지를 받을때 실행되는 콜백
+                socket.onmessage = (e) => {
+                    console.log("서버가 보낸 메시지", e.data);
+                    let json = JSON.parse(e.data);
+
+                    if (json.destination === "/users") { // 서버가 보낸 정보가 유저 목록임을 알 수 있다.
+                        users.value = json.body;
+                    } else if (json.destination === "/messages") {
+                        messages.value.push(json.body);
+                    } else if (json.destination === "/rooms") {
+                        rooms.value=json.body;
+                    }
+                }
+            }
+
+            /*-----------
+             * 메세지 전송
+            -----------*/
+            const sendMsg = () => {
+                if (!msg.value.trim()) return;
+
+                const payload = {
+                    type: "MESSAGE",
+                    sender: username.value,
+                    content: msg.value
+                }
+
+                send(payload);
+
+                msg.value = "";
+            }
+
+            /*-----------
+             * 방 만들기
+            -----------*/
+            const createRoom = () => {
+                if (roomName.value.trim()) {
+                    send({
+                        type: "ROOM_CREATE",
+                        sender: username.value,
+                        content: roomName.value
+                    });
+                    roomName.value = "";
+                }
+            }
+
+            /*-----------
+            * 방 참여
+            -----------*/
+            const enterRoom = (roomId) => {
+                send({
+                    type: "ROOM_ENTER",
+                    sender: username.value,
+                    roomId: roomId
+                })
+            }
+            /*-----------
+            * 방 나가기
+            -----------*/
+            const leaveRoom = (roomId) => {
+                send({
+                    type: "ROOM_LEAVE",
+                    sender: username.value,
+                    roomId: roomId
+                })
+            }
+            /*-----------
+             * 연결 해제
+             -----------*/
+            const disconnect = () => {
+                // 서버에 접속 끊음 알리기.
+                if (confirm("연결해제 하시겠어요?")) {
+
+                    send({
+                        type: "DISCONNECT",
+                        sender: username.value
+                    });
+
+                    socket.close();
+                    // 소켓이 닫힌 상태에서는 서버의 브로드 캐스트를 받을 수 없으므로
+                    // 현재 접속자 목록에서 나를 수동으로 제거해야 한다.
+                    let newUsers = [];
+
+                    // 기존 유저 목록이 들어있는 배열에서, 현지 사용자를 제거한 후 최종 배열을` 생성
+                    for (let i = 0; i < users.length; i++) {
+                        if (users.value[i] != username.value) {
+
+                            newUsers.push(users.value[i]);
+                        }
+                    }
+                    users.value = newUsers
+                }
+
+            }
+
+
+            return {
+                username,
+                roomName,
+                rooms,
+                msg,
+                messages,
+                enterRoom,
+                leaveRoom,
+                roomName,
+                users,
+                connected,
+                disconnect,
+                sendMsg,
+                connect,
+                createRoom
+            };
+        }
+    }).mount("#app");
+</script>
